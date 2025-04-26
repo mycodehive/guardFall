@@ -85,6 +85,8 @@ def show():
     │    │    └── scaler.pkl     # 파이썬 객체 저장장
     │    ├── csv/                # 영상 분석 csv 파일 디렉토리리
     │    └── mov/                # 업로드된 영상 파일 디렉토리리
+    ├── db/
+    │    └── guardfall.db        # 좌표값 저장하는 db
     ├── telegram_config.py       # 텔레그램 봇 설정
     └── requirements.txt         # 설치 패키지 목록(uv add -r .\\requirements.txt (pip install tensorflow==2.17.0 만 따로 인스톨))
     ```
