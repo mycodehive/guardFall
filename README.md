@@ -1,74 +1,91 @@
-# 노인 낙상 감지 및 알림 시스템 개발 계획서
+🛡️ 배려대상자(노인, 아이 등) 낙상 감지 및 알림 시스템 소개
 
 ![image](https://github.com/user-attachments/assets/a21be991-f272-46e6-bbd5-7aa691472083)
 
-1. 프로젝트 개요
->프로젝트명: 지능형 노인 낙상 감지 및 인터랙티브 알림 시스템
+### 📋 프로젝트 개요
+- 배려대상자의 **낙상 사고**는 골절, 후유증, 심각할 경우 사망으로 이어질 수 있어 **빠른 감지와 대응**이 중요합니다.
+- 본 시스템은 **웹캠**을 이용해, 보호가 필요한 분들의 **움직임**을 실시간으로 감지하고,**낙상 여부를 판단**하고, 필요 시 **텔레그램 알림**을 보내는 것을 목표로 합니다.
 
->목적: 1인 가구 노인의 안전을 위해, 낙상 사고를 실시간으로 감지하고 보호자에게 즉시 알림을 전송하는 시스템 개발. 카메라 기반 낙상 감지 기능에 더해, ChatGPT API를 활용한 자연어 설명, 보호자와의 대화형 알림, 대응 가이드 제공 등을 통해 보다 인간 중심적이고 스마트한 돌봄 시스템을 구현
+### 📚 사용 기술
+- **Python** : 3.11.0 (이하 라이브러리들은 해당 3.11.0 버전에 맞춰서 설치함.)
+- **OpenCV** (영상 처리) : 4.11.0.86
+- **MediaPipe** (포즈 인식) : 0.10.21
+- **TensorFlow** (딥러닝 모델) : 2.17.0
+- **Streamlit** (웹 UI) : 1.27.0
+- **python-telegram-bot** (알림 전송) : 22.0
 
->주요 기능:
->
->카메라를 통한 실시간 영상 분석,
->
->낙상 상황 인식 (딥러닝 기반 또는 영상처리 기반),
->
->낙상 발생 시 알림 (앱/문자/웹 대시보드/이메일 등),
->
->수집된 데이터로 낙상 예상시간 및 위험 코어타임 사전 알림,
+### 🏗️ 시스템 구조 (개요)
+```plaintext
+카메라 (웹캠/휴대폰) → 관절 추출 (MediaPipe) → 상태 분석 (딥러닝 모델) → 낙상 판단 → 알림 (Telegram) 발송
+```
+![image](https://github.com/user-attachments/assets/546b47df-e08d-4a8f-9768-a3a6ec9fbc1d)   
 
-2. 시스템 구성
->하드웨어 : 일반 웹캠 or 라즈베리파이 카메라 (Raspberry Pi + Pi Camera 고려 가능) or 여분 휴대폰
->
->소프트웨어 :
->
->Python
->
->OpenCV (영상 처리)
->
->MediaPipe / OpenPose (사람 자세 추정)
->
->TensorFlow/Keras (딥러닝 모델 선택 시)
->
->Telegram API (알림 전송)
->
->Streamlit  (웹 대시보드)
+---
 
-3. 시스템 플로우
->![image](https://github.com/user-attachments/assets/546b47df-e08d-4a8f-9768-a3a6ec9fbc1d)
+# 📖 메뉴 구성 및 설명
 
-4. 기능정의
->|기능|설명|
->|:-----:|:-----:|
->|실시간 영상 스트리밍|카메라를 통해 실시간 영상 수집|
->|자세추정|사람의 뼈대나 중심을 추정하여 자세 분석|
->|낙상 판별 알고리즘|누워 있는 자세를 일정 시간 이상 유지 시 낙상으로 판단|
->|알림 전송|보호자에게 알림 메시지 전송 (SMS/앱/웹)|
->|기록 저장|낙상 이벤트 기록 DB 저장 및 조회 기능|
+## 1. 홈 (Home)
 
-5. 개발일정
-> 1주차 : 요구사항 정리, OpenCV 실습, 카메라 연결 / 사람 감지 및 자세 추정 (MediaPipe/YOLO/딥러닝 모델 비교)
-> 
-> 2주차 : DB 설계 / 낙상 판별 알고리즘 설계 및 테스트
-> 
-> 3주차 : 알림 시스템 연동 (Telegram) / 웹 대시보드 또는 앱 알림 기능
-> 
-> 4주차 : 통합 테스트 및 시연 영상 제작 / 추가 수정 보완
-> 
-> 5주차 : 최종테스트 및 발표
+### 📝 설명
+- 시스템의 **개요**와 **프로젝트 목표**를 안내합니다.
+- 시스템 사용 방법 및 주의사항 등을 간략히 소개합니다.
+---
 
->Gamma : [https://gamma.app/docs/-od3bunrb5l3o40z](https://gamma.app/docs/-od3bunrb5l3o40z)
->
->Google Docs : [https://docs.google.com/document/d/1BMVVvwdUbuOgPqAxZ6644Fkr5GLpo8zpEisSsnekLC4/edit?usp=sharing](https://docs.google.com/document/d/1BMVVvwdUbuOgPqAxZ6644Fkr5GLpo8zpEisSsnekLC4/edit?usp=sharing)
+## 2. 영상 분석 (Video Analysis)
 
-6. 데이터셋
->https://nhiss.nhis.or.kr/   국민건강보험공단이에요,  데이터 찾으셔서 낙상 관련 진단 코드로 고령자 낙상 데이터 추출 가능합니다. 
->https://opendata.hira.or.kr/ - 심평원 데이터 있는 곳이에요, 낙상 진료 코드로 검색, 병원 이용 현황, 연령대별 통계 확인 가능합니다.
+### 📝 설명
+- 업로드된 영상 파일(MP4)로 사람의 포즈(관절)를 인식하고, 실시간으로 좌표값 추출 및 낙상 여부 판단을 수행합니다.
+- 추출한 좌표값으로 낙상 라벨링을 하여 분석된 결과를 **CSV 파일**로 저장할 수 있습니다.
+- 라벨링은 학습한 결과와 비교하여 꾸준히 업데이트 됩니다.
+---
 
----------------------------------------
+## 3. 모델 생성 (Model Training)
 
-[study]
-  - medipipe
-     - [https://velog.io/@givemetangerine/MediaPipe-%EC%BD%94%EB%93%9C%EB%A5%BC-%EB%9C%AF%EC%96%B4%EB%B3%B4%EC%9E%90](https://velog.io/@givemetangerine/MediaPipe-%EC%BD%94%EB%93%9C%EB%A5%BC-%EB%9C%AF%EC%96%B4%EB%B3%B4%EC%9E%90)
-     - [https://github.com/google-ai-edge/mediapipe/tree/master/mediapipe/python](https://github.com/google-ai-edge/mediapipe/tree/master/mediapipe/python)
+### 📝 설명
+- 수집된 관절 좌표 데이터(CSV)를 기반으로 딥러닝 모델을 훈련하여 낙상 여부를 예측할 수 있는 모델을 생성합니다.
+- 학습이 끝나면 `.keras` 모델과 `.pkl` 모델 파일이 저장됩니다.
+```plaintext
+[📦 .keras 파일]
+ - "훈련 끝난 신경망 모델"을 담은 딥러닝 모델 파일
+ - 특히 TensorFlow나 Keras 프레임워크에서 만든 학습된 모델을 저장
+ - 파일 내부 구조 : 모델의 구조 (레이어들), 모델의 가중치(weight) 값
+         
+[📦 .pkl 파일]
+ - 파이썬 안에서 만든 어떤 물건을 그대로 파일로 저장하는 파이썬 객체를 저장하는 파일
+ - 👉 관절 좌표 데이터를 학습할 때, 숫자 범위를 정규화(normalization)하는 스케일러를 저장하는 데 주로 사용
+ - 파일 내부 구조 : 데이터셋, 모델, 스케일러(정규화기) 
+```
+---
 
+## 4. 실시간 감시 (Real-time Monitoring)
+
+### 📝 설명
+- 실제 서비스용 모드.
+- 웹캠으로 실시간 모니터링하여 낙상 위험이 감지되면,텔레그램 알림을 전송합니다.
+---
+
+# 📦 개발 파일 구조
+
+```plaintext
+/guardFall
+├── streamlit_app.py         # 메인 앱 (메뉴 연결)
+├── script/
+│    ├── fallpredict.py      # 낙상여부 기준 사용자 파일
+│    └── util.py             # 유용한 사용자 함수
+├── page/
+│    ├── home.py             # 랜딩페이지
+│    ├── analyzermov.py      # 영상 분석 (Video Analysis)
+│    ├── createmodel.py      # 모델 생성 (Model Training)
+│    ├── motoring.py         # 실시간 감시 (Real-time Monitoring)
+│    └── link.py             # 각종 링크안내 페이지
+├── user/
+│    ├── model/
+│    │    ├── fall_model.h5  # 학습된 모델
+│    │    └── scaler.pkl     # 파이썬 객체 저장장
+│    ├── csv/                # 영상 분석 csv 파일 디렉토리리
+│    └── mov/                # 업로드된 영상 파일 디렉토리리
+├── db/
+│    └── guardfall.db        # 좌표값 저장하는 db
+├── telegram_config.py       # 텔레그램 봇 설정
+└── requirements.txt         # 설치 패키지 목록(uv add -r .\\requirements.txt (pip install tensorflow==2.17.0 만 따로 인스톨))
+```
