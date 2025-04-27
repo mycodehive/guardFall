@@ -1,4 +1,5 @@
 import streamlit as st
+import script.fallpredict_test as ft
 
 def Github():
     st.title("🐙 소스")

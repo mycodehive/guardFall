@@ -5,9 +5,13 @@ import page.analyzermov as al
 import page.createmodel as cm
 import page.motoring as mo
 import page.link as link
+import os
+from tensorflow.keras.models import load_model
+import joblib
+import numpy as np
 
 # ✅ 페이지 설정
-st.set_page_config(page_title="시스템", layout="wide")
+st.set_page_config(page_title="배려대상자(노인, 아이, 거동불편자 등) 낙상 감지 및 알림 시스템", layout="wide")
 
 st.markdown(
     """
