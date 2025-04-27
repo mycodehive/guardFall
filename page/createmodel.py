@@ -16,6 +16,8 @@ def show():
 
     displaytime = 1.5
     progress_box = st.empty()
+    question_box = st.empty()
+    answer_box = st.empty()
 
     csv_dir = os.path.abspath(os.path.join("user", "csv"))
     csv_files = [f for f in os.listdir(csv_dir) if f.endswith(".csv") and f != "merged_user_data.csv"]

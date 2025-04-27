@@ -2,7 +2,7 @@ import streamlit as st
 import cv2
 import mediapipe as mp
 from collections import defaultdict
-import os
+import os, time
 import pandas as pd
 import ast
 from script import util
@@ -25,6 +25,19 @@ def show():
 
     with col1:
         st.markdown("### 💾 파일을 업로드하세요.")
+
+        selected = st.radio(
+            "낙상판단 기준을 무엇으로 할까요?",
+            ("사용자모델", "딥러닝모델"),
+            horizontal=True
+        )
+
+        choose_model = 0
+        if selected == "사용자모델":
+            choose_model = "userModel"
+        elif selected == "딥러닝모델":
+            choose_model = "kerasModel"
+
         video_file = st.file_uploader("🎞️ 분석할 영상 파일을 업로드하세요", type=["mp4", "avi"])
         progress_box = st.empty()
         if video_file:
@@ -116,6 +129,11 @@ def show():
 
             cap.release()
 
+            if choose_model == "userModel" :
+                progress_box.info(f"사용자모델로 낙상여부 판단중...")
+            elif choose_model == "kerasModel" :
+                 progress_box.info(f"딥러닝모델로 낙상여부 판단중...")
+
             # 👉 landmark 데이터 저장
             if landmark_data:
                 df = pd.DataFrame(landmark_data)
@@ -127,17 +145,26 @@ def show():
 
                 # 기존 컬럼 제거
                 df.drop(columns=["left_shoulder", "right_shoulder", "left_knee", "right_knee"], inplace=True)
-                df["checkFall"] = df.apply(lambda row: fallpredict.is_fallen(
-                                            row["left_shoulder_y"], row["right_shoulder_y"], 
-                                            row["left_knee_y"], row["right_knee_y"], 
-                                            row["left_shoulder_vr"], row["right_shoulder_vr"], 
-                                            row["left_knee_vr"], row["right_knee_vr"]
-                                        ), axis=1)
+                if choose_model == "userModel" :
+                    df["checkFall"] = df.apply(lambda row: fallpredict.is_fallen(
+                                                row["left_shoulder_x"],row["left_shoulder_y"], row["left_shoulder_v"],row["left_shoulder_vr"],
+                                                row["right_shoulder_x"],row["right_shoulder_y"], row["right_shoulder_v"],row["right_shoulder_vr"], 
+                                                row["left_knee_x"],row["left_knee_y"], row["left_knee_v"],row["left_knee_vr"], 
+                                                row["right_knee_x"],row["right_knee_y"], row["right_knee_v"],row["right_knee_vr"]
+                                            ), axis=1)
+                elif choose_model == "kerasModel" :
+                    df["checkFall"] = df.apply(lambda row: fallpredict.is_fallen_model(
+                                                row["left_shoulder_x"],row["left_shoulder_y"], row["left_shoulder_v"],row["left_shoulder_vr"],
+                                                row["right_shoulder_x"],row["right_shoulder_y"], row["right_shoulder_v"],row["right_shoulder_vr"], 
+                                                row["left_knee_x"],row["left_knee_y"], row["left_knee_v"],row["left_knee_vr"], 
+                                                row["right_knee_x"],row["right_knee_y"], row["right_knee_v"],row["right_knee_vr"]
+                                            ), axis=1)
 
                 csv_dir = os.path.abspath(os.path.join("user", "csv"))
-                file_name = os.path.splitext(os.path.basename(file_path))[0]+"_landmarks.csv"
+                file_name = os.path.splitext(os.path.basename(file_path))[0]+"_"+choose_model+"_landmarks.csv"
                 csv_save_path = os.path.join(csv_dir, file_name)
                 csv_display_path = os.path.join("user", "csv", file_name)
-                df.to_csv(csv_save_path, index=False)
+                df.to_csv(csv_save_path, index=False)                
+                time.sleep(1.5)
                 progress_box.success(f"좌표 추출 완료! CSV 저장: {csv_display_path}")
             # ]---여기까지 영상 분석---------------------
