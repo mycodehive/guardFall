@@ -6,7 +6,7 @@
 - 배려대상자의 **낙상 사고**는 골절, 후유증, 심각할 경우 사망으로 이어질 수 있어 **빠른 감지와 대응**이 중요합니다.
 - 본 시스템은 **웹캠**을 이용해, 보호가 필요한 분들의 **움직임**을 실시간으로 감지하고,**낙상 여부를 판단**하고, 필요 시 **텔레그램 알림**을 보내는 것을 목표로 합니다.
 
-### 📚 사용 기술 ([requirements.txt 참고](https://github.com/mycodehive/guardFall/blob/main/requirements.txt))
+### 📚 대표 사용 기술 ([requirements.txt 참고](https://github.com/mycodehive/guardFall/blob/main/requirements.txt))
 |Library|Role|Version|Document|Note|
 |:------|:------:|:------:|:------:|:------|
 |**Python**||3.11.0||(이하 라이브러리들은 해당 3.11.0 버전에 맞춰서 설치함.)|
