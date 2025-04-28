@@ -83,7 +83,7 @@
 ├── user/
 │    ├── model/
 │    │    ├── fall_model.keras  # 학습된 모델
-│    │    └── scaler.pkl        # 파이썬 객체 저장장
+│    │    └── scaler.pkl        # 파이썬 객체 저장
 │    ├── csv/                   # 영상 분석 csv 파일 디렉토리리
 │    └── mov/                   # 업로드된 영상 파일 디렉토리리
 ├── db/
