@@ -3,7 +3,7 @@
 ### Step 1
   - medipipe 라이브러리 때문에 python은 3.11.0으로 맞춤
   - window : [python-3.11.0-amd64.exe](https://www.python.org/ftp/python/3.11.0/python-3.11.0-amd64.exe)
-  - Mac :macOS 11 (Big Sur) 이상 → [python-3.11.0-macos11.pkg](https://www.python.org/ftp/python/3.11.0/python-3.11.0-macos11.pkg)
+  - Mac : macOS 11 (Big Sur) 이상 → [python-3.11.0-macos11.pkg](https://www.python.org/ftp/python/3.11.0/python-3.11.0-macos11.pkg)
   - "C:\Python311" 로 설치
 
 ### Step 2
