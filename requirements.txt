@@ -8,4 +8,4 @@ pandas==2.2.2
 scikit-learn==1.4.2
 joblib==1.4.2
 streamlit-option-menu==0.3.6
-# pip install tensorflow==2.17.0 ==> tensorflow는 uv로 설치하며 안됨
+# pip install tensorflow==2.17.0 ==> 윈도우에서 tensorflow는 uv로 설치하면 안됨
