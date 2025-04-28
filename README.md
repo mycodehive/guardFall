@@ -91,7 +91,7 @@
 ├── db/
 │    └── guardfall.db           # 좌표값 저장하는 db
 ├── telegram_config.py          # 텔레그램 봇 설정
-└── requirements.txt            # 설치 패키지 목록(uv add -r .\\requirements.txt (pip install tensorflow==2.17.0 만 따로 인스톨))
+└── requirements.txt            # 설치 패키지 목록(uv add -r requirements.txt (pip install tensorflow==2.17.0 만 따로 인스톨))
 ```
 ---
 
