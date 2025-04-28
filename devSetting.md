@@ -34,8 +34,11 @@
 ### Step 5
   - uv add -r requirements.txt 로 설치
   - 단, TensorFlows는 가상환경 내에서 uv로 설치리 의존성 파일까지 설치되면서 윈도우에서 맥용 라이브러가 설치됨. 오류발생
-    - window : (guardFall) C:\guardFall\pip install TensorFlow=2.17.0 으로 설치
-    - mac : requirements.txt 에 TensorFlow=2.17.0 을 추가하여 uv add -r requirements.txt 처리
+    - window :
+      - .venv\Scripts\activate
+      - (guardFall) C:\guardFall\pip install tensorflow==2.17.0 으로 설치
+      - .venv\Scripts\deactivate
+    - mac : requirements.txt 에 tensorflow=2.17.0 을 추가하여 uv add -r requirements.txt 처리
   - C:\guardFall\pyproject.toml 의 dependencies 항목 확인하기
 
 ### Step 6
