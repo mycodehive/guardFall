@@ -76,6 +76,7 @@
 │    ├── home.py             # 랜딩페이지
 │    ├── analyzermov.py      # 영상 분석 (Video Analysis)
 │    ├── createmodel.py      # 모델 생성 (Model Training)
+│    ├── applymodel.py       # 모델 적용 (Model Apply)
 │    ├── motoring.py         # 실시간 감시 (Real-time Monitoring)
 │    └── link.py             # 각종 링크안내 페이지
 ├── user/
