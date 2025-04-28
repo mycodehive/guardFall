@@ -7,12 +7,14 @@
 - 본 시스템은 **웹캠**을 이용해, 보호가 필요한 분들의 **움직임**을 실시간으로 감지하고,**낙상 여부를 판단**하고, 필요 시 **텔레그램 알림**을 보내는 것을 목표로 합니다.
 
 ### 📚 사용 기술 ([requirements.txt 참고](https://github.com/mycodehive/guardFall/blob/main/requirements.txt))
-- **Python** : 3.11.0 (이하 라이브러리들은 해당 3.11.0 버전에 맞춰서 설치함.)
-- **OpenCV** (영상 처리) : 4.11.0.86
-- **MediaPipe** (포즈 인식) : 0.10.21
-- **TensorFlow** (딥러닝 모델) : 2.17.0
-- **Streamlit** (웹 UI) : 1.27.0
-- **python-telegram-bot** (알림 전송) : 22.0
+|Library|Role|Version|Document|Note|
+|:------|:------:|:------:|:------:|:------|
+|**Python**||3.11.0||(이하 라이브러리들은 해당 3.11.0 버전에 맞춰서 설치함.)|
+|**OpenCV**|(영상 처리)|4.11.0.86|([Study](https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html))||
+|**MediaPipe**|(포즈 인식)|0.10.21|([Study](https://github.com/mycodehive/guardFall/blob/main/script/README.md))||
+|**TensorFlow**|(딥러닝 모델)|2.17.0|([Study](https://colab.research.google.com/github/tensorflow/docs-l10n/blob/master/site/ko/tutorials/quickstart/beginner.ipynb?hl=ko))||
+|**Streamlit**|(웹 UI)|1.27.0|([Study](https://docs.streamlit.io/develop/quick-reference/cheat-sheet))||
+|**python-telegram-bot**|(알림 전송)|22.0|([Study](https://youtu.be/S_MN3WGQDN4?si=WWDQLTfcCUCda_FN&t=186))||
 
 ### 🏗️ 시스템 구조 (개요)
 ```plaintext
