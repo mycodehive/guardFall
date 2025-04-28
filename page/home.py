@@ -71,25 +71,27 @@ def show(model):
 
     ```plaintext
     /guardFall
-    ├── streamlit_app.py         # 메인 앱 (메뉴 연결)
+    ├── streamlit_app.py            # 메인 앱 (메뉴 연결)
     ├── script/
-    │    ├── fallpredict.py      # 낙상여부 기준 사용자 파일
-    │    └── util.py             # 유용한 사용자 함수
+    │    ├── fallpredict.py         # 낙상여부 기준 사용자 파일
+    │    ├── model_loader.py        # 모델을 메모리에 올리는 파일
+    │    └── util.py                # 유용한 사용자 함수
     ├── page/
-    │    ├── home.py             # 랜딩페이지
-    │    ├── analyzermov.py      # 영상 분석 (Video Analysis)
-    │    ├── createmodel.py      # 모델 생성 (Model Training)
-    │    ├── motoring.py         # 실시간 감시 (Real-time Monitoring)
-    │    └── link.py             # 각종 링크안내 페이지
+    │    ├── home.py                # 랜딩페이지
+    │    ├── analyzermov.py         # 영상 분석 (Video Analysis)
+    │    ├── createmodel.py         # 모델 생성 (Model Training)
+    │    ├── applymodel.py          # 모델 적용 (Model Apply)
+    │    ├── motoring.py            # 실시간 감시 (Real-time Monitoring)
+    │    └── link.py                # 각종 링크안내 페이지
     ├── user/
     │    ├── model/
-    │    │    ├── fall_model.h5  # 학습된 모델
-    │    │    └── scaler.pkl     # 파이썬 객체 저장장
-    │    ├── csv/                # 영상 분석 csv 파일 디렉토리리
-    │    └── mov/                # 업로드된 영상 파일 디렉토리리
+    │    │    ├── fall_model.keras  # 학습된 모델
+    │    │    └── scaler.pkl        # 파이썬 객체 저장
+    │    ├── csv/                   # 영상 분석 csv 파일 디렉토리리
+    │    └── mov/                   # 업로드된 영상 파일 디렉토리리
     ├── db/
-    │    └── guardfall.db        # 좌표값 저장하는 db
-    ├── telegram_config.py       # 텔레그램 봇 설정
-    └── requirements.txt         # 설치 패키지 목록(uv add -r .\\requirements.txt (pip install tensorflow==2.17.0 만 따로 인스톨))
+    │    └── guardfall.db           # 좌표값 저장하는 db
+    ├── telegram_config.py          # 텔레그램 봇 설정
+    └── requirements.txt            # 설치 패키지 목록(uv add -r requirements.txt (pip install tensorflow==2.17.0 만 따로 인스톨))
     ```
     """)
