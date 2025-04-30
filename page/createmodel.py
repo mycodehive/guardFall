@@ -9,6 +9,7 @@ from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping
 import joblib
+import matplotlib.pyplot as plt
 
 def show():
     st.title("🧠 모델 생성")
@@ -123,4 +124,50 @@ def show():
     joblib.dump(scaler, scaler_save_path)
 
     time.sleep(displaytime)
-    progress_box.info(f"🎉 모델링이 완료되었습니다! '{model_dir}'에 저장되었습니다.")
+    progress_box.success("✔️ [10] 테스트 데이터로 정확도를 평가합니다.")
+    loss, accuracy = model.evaluate(X_test, y_test, verbose=0)
+
+    # [11] 정확도 및 손실 그래프 시각화
+    time.sleep(displaytime)
+    progress_box.success("✔️ [11] 학습 과정 시각화를 시작합니다. 하단에 그래프를 참조하세요")
+
+    # 컬럼 분할
+    col1, col2 = st.columns(2)
+
+    # 📈 정확도 그래프
+    with col1:
+        fig_acc, ax_acc = plt.subplots(figsize=(6, 4))
+        ax_acc.plot(history.history['accuracy'], label='Train Accuracy', linewidth=2, color='blue')
+        ax_acc.plot(history.history['val_accuracy'], label='Val Accuracy', linewidth=2, color='green')
+        ax_acc.set_title('Model Accuracy Curve', fontsize=16)
+        ax_acc.set_xlabel('Epoch', fontsize=12)
+        ax_acc.set_ylabel('Accuracy', fontsize=12)
+        ax_acc.grid(True, linestyle='--', alpha=0.5)
+        ax_acc.legend(loc='lower right', fontsize=10)
+        st.pyplot(fig_acc)
+
+    # 📉 손실 그래프
+    with col2:
+        fig_loss, ax_loss = plt.subplots(figsize=(6, 4))
+        ax_loss.plot(history.history['loss'], label='Train Loss', linewidth=2, color='red')
+        ax_loss.plot(history.history['val_loss'], label='Val Loss', linewidth=2, color='orange')
+        ax_loss.set_title('Loss Over Epochs', fontsize=16)
+        ax_loss.set_xlabel('Epoch', fontsize=12)
+        ax_loss.set_ylabel('Loss', fontsize=12)
+        ax_loss.grid(True, linestyle='--', alpha=0.5)
+        ax_loss.legend(loc='upper right', fontsize=10)
+        st.pyplot(fig_loss)
+
+    acc_train_end = history.history['accuracy'][-1]
+    acc_val_end = history.history['val_accuracy'][-1]
+    acc_gap = abs(acc_train_end - acc_val_end)
+
+    if acc_gap < 0.05:
+        st.info("✅ 학습과 검증 정확도의 차이가 작아 일반화 성능이 우수한 모델입니다.")
+    elif acc_train_end > acc_val_end:
+        st.warning("⚠️ 학습 정확도는 높지만 검증 정확도가 낮아 과적합이 의심됩니다.")
+    else:
+        st.error("❌ 전체적으로 정확도가 낮아 모델 구조 또는 데이터 품질 개선이 필요합니다.")
+
+    time.sleep(displaytime)
+    progress_box.info(f"🎉 모델링이 완료되었습니다! '{model_dir}'에 저장되었습니다. 모델 정확도는 {accuracy * 100:.2f}% 입니다. ")

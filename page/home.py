@@ -82,11 +82,14 @@ def show(model):
     │    ├── createmodel.py         # 모델 생성 (Model Training)
     │    ├── applymodel.py          # 모델 적용 (Model Apply)
     │    ├── motoring.py            # 실시간 감시 (Real-time Monitoring)
+    │    ├── setting.py             # 각 낙상 판단 기준값 CRUD             
     │    └── link.py                # 각종 링크안내 페이지
     ├── user/
     │    ├── model/
     │    │    ├── fall_model.keras  # 학습된 모델
     │    │    └── scaler.pkl        # 파이썬 객체 저장
+    │    ├── setting/               # 영상 분석 csv 파일 디렉토리리
+    │    │    └── config.json       # 각 낙상 판단 기준값 환경설정값           
     │    ├── csv/                   # 영상 분석 csv 파일 디렉토리리
     │    └── mov/                   # 업로드된 영상 파일 디렉토리리
     ├── db/

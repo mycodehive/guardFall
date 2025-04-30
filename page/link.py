@@ -6,6 +6,8 @@ def Github():
     st.write("Github 소스를 공유합니다.")
     # HTML을 이용해 외부 링크로 리다이렉트
     link("https://github.com/mycodehive/guardFall", "🔗 Git 프로젝트 보기")
+    link("https://github.com/mycodehive/guardFall/wiki", "🔗 Git Wiki 보기")
+    link("https://github.com/mycodehive/guardFall/issues", "🔗 Git issues 보기")
 
 def PPT():
     st.title("📊 프리젠테이션")

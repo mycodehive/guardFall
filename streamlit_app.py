@@ -5,11 +5,10 @@ import page.analyzermov as al
 import page.createmodel as cm
 import page.applymodel as am
 import page.motoring as mo
-import page.monitor_test as mot
+import page.setting as setg
+import test.monitor_test as mot
 import page.link as link
 import os
-import joblib
-import numpy as np
 import script.model_loader as ml
 
 
@@ -35,8 +34,10 @@ st.markdown(
 with st.sidebar:
     selected = option_menu(
         menu_title="메뉴",
-        options=["홈", "영상 분석", "모델 생성", "모델 적용", "실시간 감시","Github", "PPT", "Test"],
-        icons=["house", "camera-video", "cpu", "box-fill", "activity", "github","file-earmark-ppt", "activity"], # https://icons.getbootstrap.com/
+        #options=["홈", "영상 분석", "모델 생성", "모델 적용", "실시간 감시", "환경설정", "Github", "PPT", "Test"],
+        options=["홈", "영상 분석", "모델 생성", "모델 적용", "실시간 감시", "환경설정", "Github", "PPT"],
+        icons=["house", "camera-video", "cpu", "box-fill", "activity", "boxes", "github","file-earmark-ppt"],
+        #icons=["house", "camera-video", "cpu", "box-fill", "activity", "boxes", "github","file-earmark-ppt", "activity"], # https://icons.getbootstrap.com/
         menu_icon="shield-lock",
         default_index=0,
     )
@@ -57,6 +58,9 @@ elif selected == "모델 적용":
 elif selected == "실시간 감시":
     mo.show()
 
+elif selected == "환경설정":
+    setg.show()
+
 elif selected == "Github":
     link.Github()
 
@@ -65,6 +69,3 @@ elif selected == "PPT":
 
 elif selected == "PPT":
     link.PPT()
-
-elif selected == "Test":
-    mot.show()
