@@ -3,3 +3,13 @@
 ### 소개영상 : [https://youtu.be/ecgpAeGIZnI](https://youtu.be/ecgpAeGIZnI)
 
 [![Video Label](http://img.youtube.com/vi/ecgpAeGIZnI/0.jpg)](https://youtu.be/ecgpAeGIZnI)
+
+### 코드리뷰
+
+| 항목 | 평가 |
+|------|------|
+| 기능 완성도 | ⭐⭐⭐⭐☆ (중간 이상 수준) |
+| 코드 구성 | ⭐⭐⭐⭐☆ (모듈화/구조화 우수) |
+| 안정성 | ⭐⭐⭐☆☆ (예외처리 부족) |
+| 확장성 | ⭐⭐⭐⭐☆ (딥러닝/알림 기능 확장 가능) |
+| 실행 편의성 | ⭐⭐⭐⭐☆ (Streamlit 기반으로 쉬움) |
