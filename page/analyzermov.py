@@ -47,7 +47,7 @@ def show():
 
             cap = cv2.VideoCapture(file_path)
             frame_placeholder = st.empty()
-            pose = mp_pose.Pose()
+            pose = mp_pose.Pose(model_complexity=1)
             stop_button = st.button("⏹ 영상 처리 중지")
             last_print_time = 0
 
@@ -146,19 +146,9 @@ def show():
                 # 기존 컬럼 제거
                 df.drop(columns=["left_shoulder", "right_shoulder", "left_knee", "right_knee"], inplace=True)
                 if choose_model == "userModel" :
-                    df["checkFall"] = df.apply(lambda row: fallpredict.is_fallen(
-                                                row["left_shoulder_x"],row["left_shoulder_y"], row["left_shoulder_v"],row["left_shoulder_vr"],
-                                                row["right_shoulder_x"],row["right_shoulder_y"], row["right_shoulder_v"],row["right_shoulder_vr"], 
-                                                row["left_knee_x"],row["left_knee_y"], row["left_knee_v"],row["left_knee_vr"], 
-                                                row["right_knee_x"],row["right_knee_y"], row["right_knee_v"],row["right_knee_vr"]
-                                            ), axis=1)
+                    df["checkFall"] = df.apply(lambda row: fallpredict.is_fallen(row.to_dict()), axis=1)
                 elif choose_model == "kerasModel" :
-                    df["checkFall"] = df.apply(lambda row: fallpredict.is_fallen_model(
-                                                row["left_shoulder_x"],row["left_shoulder_y"], row["left_shoulder_v"],row["left_shoulder_vr"],
-                                                row["right_shoulder_x"],row["right_shoulder_y"], row["right_shoulder_v"],row["right_shoulder_vr"], 
-                                                row["left_knee_x"],row["left_knee_y"], row["left_knee_v"],row["left_knee_vr"], 
-                                                row["right_knee_x"],row["right_knee_y"], row["right_knee_v"],row["right_knee_vr"]
-                                            ), axis=1)
+                    df["checkFall"] = df.apply(lambda row: fallpredict.is_fallen_model(row.to_dict() ), axis=1)
 
                 csv_dir = os.path.abspath(os.path.join("user", "csv"))
                 file_name = os.path.splitext(os.path.basename(file_path))[0]+"_"+choose_model+"_landmarks.csv"

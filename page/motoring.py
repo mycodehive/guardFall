@@ -2,9 +2,35 @@ import streamlit as st
 import cv2, time
 import mediapipe as mp
 import pandas as pd
-import av
+import av, os, json
 from script import util
 from script import fallpredict
+
+def convert_landmarks_to_row(frame_landmarks):
+    return {
+        "left_shoulder_x": frame_landmarks["left_shoulder"][0],
+        "left_shoulder_y": frame_landmarks["left_shoulder"][1],
+        "left_shoulder_v": frame_landmarks["left_shoulder"][2],
+        "left_shoulder_vr": frame_landmarks["left_shoulder"][3],
+
+        "right_shoulder_x": frame_landmarks["right_shoulder"][0],
+        "right_shoulder_y": frame_landmarks["right_shoulder"][1],
+        "right_shoulder_v": frame_landmarks["right_shoulder"][2],
+        "right_shoulder_vr": frame_landmarks["right_shoulder"][3],
+
+        "left_knee_x": frame_landmarks["left_knee"][0],
+        "left_knee_y": frame_landmarks["left_knee"][1],
+        "left_knee_v": frame_landmarks["left_knee"][2],
+        "left_knee_vr": frame_landmarks["left_knee"][3],
+
+        "right_knee_x": frame_landmarks["right_knee"][0],
+        "right_knee_y": frame_landmarks["right_knee"][1],
+        "right_knee_v": frame_landmarks["right_knee"][2],
+        "right_knee_vr": frame_landmarks["right_knee"][3],
+    }
+
+# 경로 설정
+config_path = os.path.abspath(os.path.join("user", "setting", "config.json"))
 
 def show():
     st.title("🛡️ 감시 모드")
@@ -19,6 +45,8 @@ def show():
     mp_pose = mp.solutions.pose
     mp_drawing = mp.solutions.drawing_utils
     landmark_logs = []
+    global fallen_count
+    fallen_count = 0
 
     if 'camera' not in st.session_state:
         st.session_state.camera = None
@@ -26,7 +54,7 @@ def show():
         st.session_state.history = []
 
     # 화면 상단 구성
-    col1_top, col2_top, col3_top = st.columns([3.3, 3.4, 3.3])
+    col1_top, col2_top, col3_top = st.columns([2, 3, 5])
 
     with col1_top:
         col1_box = st.empty()
@@ -40,7 +68,15 @@ def show():
         col3_box = st.empty()
         col3_box.info("낙상모델")
 
+    col1, col2 = st.columns([4, 6])
+    with col1:
+        msg_box = st.empty()
+        msg_box.info("낙상 횟수를 보여줍니다.")
+    with col2:
+        msg_send = st.empty()
+        msg_send.info("메세지 전송여부를 보여줍니다.")
     st.markdown("---")
+
     # 화면 하단 구성
     col1, col2 = st.columns([4, 6])
 
@@ -65,8 +101,12 @@ def show():
         landmark_data = []  # 누적 landmark 데이터 저장
 
         if start:
+            # ✅ JSON 파일 최신 상태로 다시 로드
+            with open(config_path, "r", encoding="utf-8") as f:
+                config = json.load(f)
+            fallen_send_msg_json = config.get("fallen_send_msg", {})
             st.session_state.camera = cv2.VideoCapture(0)
-            pose = mp_pose.Pose()
+            pose = mp_pose.Pose(model_complexity=1)
             last_print_time = 0
             analyzing = True
 
@@ -84,7 +124,7 @@ def show():
 
                 # 랜드마크가 있으면 처리
                 current_time = time.time()
-                if results.pose_landmarks and current_time - last_print_time >= 3:
+                if results.pose_landmarks:                    
                     mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
                     lm = results.pose_landmarks.landmark
@@ -118,13 +158,15 @@ def show():
                     landmark_data.append(frame_landmarks)
 
                     # 누적 로그 3개 표시
-                    log_text = f"""
-                    ⏱ {frame_landmarks['timestamp']}  
-        🦴 왼쪽 어깨: {frame_landmarks['left_shoulder']} 🦴 오른쪽 어깨: {frame_landmarks['right_shoulder']}  
-        🦵 왼쪽 무릎: {frame_landmarks['left_knee']} 🦵 오른쪽 무릎: {frame_landmarks['right_knee']}  
-                    """
-                    landmark_logs.append(log_text)
-                    landmarks_box.markdown("### 📝 누적 좌표 로그(x,y,신뢰도,적합여부)\n\n" + '\n---\n'.join(landmark_logs[-1:]), unsafe_allow_html=True)
+                    if current_time - last_print_time >= 1.5 :
+                        last_print_time = current_time
+                        log_text = f"""
+                        ⏱ {frame_landmarks['timestamp']}  
+            🦴 왼쪽 어깨: {frame_landmarks['left_shoulder']} 🦴 오른쪽 어깨: {frame_landmarks['right_shoulder']}  
+            🦵 왼쪽 무릎: {frame_landmarks['left_knee']} 🦵 오른쪽 무릎: {frame_landmarks['right_knee']}  
+                        """
+                        landmark_logs.append(log_text)
+                        landmarks_box.markdown("### 📝 누적 좌표 로그(x,y,신뢰도,적합여부)\n\n" + '\n---\n'.join(landmark_logs[-1:]), unsafe_allow_html=True)
 
                 # 화면에 출력
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -146,17 +188,14 @@ def show():
                     fall_check_function  = fallpredict.is_fallen_model   
                     fall_msg = "keras 모델로 검증합니다."
 
-                col2_box_msg = fall_check_function(
-                                    frame_landmarks['left_shoulder'][0], frame_landmarks['left_shoulder'][1],
-                                    frame_landmarks['left_shoulder'][2], frame_landmarks['left_shoulder'][3],
-                                    frame_landmarks['right_shoulder'][0], frame_landmarks['right_shoulder'][1],
-                                    frame_landmarks['right_shoulder'][2], frame_landmarks['right_shoulder'][3],
-                                    frame_landmarks['left_knee'][0], frame_landmarks['left_knee'][1],
-                                    frame_landmarks['left_knee'][2], frame_landmarks['left_knee'][3],
-                                    frame_landmarks['right_knee'][0], frame_landmarks['right_knee'][1],
-                                    frame_landmarks['right_knee'][2], frame_landmarks['right_knee'][3])
+                col2_box_msg = fall_check_function(convert_landmarks_to_row(frame_landmarks))
                 if col2_box_msg == 1 :
-                    col2_box.error("💥🧓💢 **낙상!!**  \n⚠️ 감지된 자세가 위험합니다. 즉시 확인하세요!", icon="🚨")
+                    col2_box.error("💥🧓💢 **낙상!!**  \n⚠️ 감지된 자세가 위험합니다.", icon="🚨")
+                    fallen_count += 1
+                    if (fallen_count % fallen_send_msg_json["FALL_COUNT"] == 0) :
+                        msg_send.info(f"낙상 {fallen_count}회가 초과하였으므로 보호자에게 메세지를 발송합니다.")
+                    else :
+                        msg_box.info(f"낙상 {fallen_count}회 발생하였습니다.")
                 else :
                     col2_box.success("정상")
                 col3_box.success(f"낙상모델 : {selected}\n{fall_msg}")
