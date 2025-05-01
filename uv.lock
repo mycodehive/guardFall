@@ -485,6 +485,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "joblib" },
     { name = "mediapipe" },
+    { name = "nest-asyncio" },
     { name = "numpy" },
     { name = "opencv-python" },
     { name = "pandas" },
@@ -499,6 +500,7 @@ dependencies = [
 requires-dist = [
     { name = "joblib", specifier = "==1.4.2" },
     { name = "mediapipe", specifier = "==0.10.21" },
+    { name = "nest-asyncio", specifier = "==1.5.8" },
     { name = "numpy", specifier = "==1.26.4" },
     { name = "opencv-python", specifier = "==4.11.0.86" },
     { name = "pandas", specifier = "==2.2.2" },
@@ -895,6 +897,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/ee/6a/a98fa5e9d530a428a0cd79d27f059ed65efd3a07aad61a8c93e323c9c20b/narwhals-1.35.0.tar.gz", hash = "sha256:07477d18487fbc940243b69818a177ed7119b737910a8a254fb67688b48a7c96", size = 265784 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/80/b3/5781eb874f04cb1e882a7d93cf30abcb00362a3205c5f3708a7434a1a2ac/narwhals-1.35.0-py3-none-any.whl", hash = "sha256:7562af132fa3f8aaaf34dc96d7ec95bdca29d1c795e8fcf14e01edf1d32122bc", size = 325708 },
+]
+
+[[package]]
+name = "nest-asyncio"
+version = "1.5.8"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/93/fd/4c3fa3f390d00f4c85d1102988d3fda588e8d45216998715bfa2f5caf411/nest_asyncio-1.5.8.tar.gz", hash = "sha256:25aa2ca0d2a5b5531956b9e273b45cf664cae2b145101d73b86b199978d48fdb", size = 6105 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ab/d3/48c01d1944e0ee49fdc005bf518a68b0582d3bd201e5401664890b62a647/nest_asyncio-1.5.8-py3-none-any.whl", hash = "sha256:accda7a339a70599cb08f9dd09a67e0c2ef8d8d6f4c07f96ab203f2ae254e48d", size = 5268 },
 ]
 
 [[package]]
