@@ -13,7 +13,7 @@
   "is_fallen_Upperbody": {
     "MIN_OK_PARTS": 1,
     "LS_Y": 0.9,
-    "RS_Y": 0.9,
+    "RS_Y": 0.89,
     "FALL_COUNT": 2
   },
   "fallen_send_msg": {

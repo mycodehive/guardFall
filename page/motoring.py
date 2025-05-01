@@ -5,6 +5,7 @@ import pandas as pd
 import av, os, json
 from script import util
 from script import fallpredict
+from script import sendmsg
 
 def convert_landmarks_to_row(frame_landmarks):
     return {
@@ -194,6 +195,7 @@ def show():
                     fallen_count += 1
                     if (fallen_count % fallen_send_msg_json["FALL_COUNT"] == 0) :
                         msg_send.info(f"낙상 {fallen_count}회가 초과하였으므로 보호자에게 메세지를 발송합니다.")
+                        sendmsg.send_message(f"{frame_landmarks['timestamp']} 낙상 발생!\n빠른 시간안에 확인 바랍니다.")
                     else :
                         msg_box.info(f"낙상 {fallen_count}회 발생하였습니다.")
                 else :
