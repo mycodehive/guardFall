@@ -2,7 +2,7 @@ import streamlit as st
 import cv2, time
 import mediapipe as mp
 import pandas as pd
-import av, os, json
+import os, json
 from script import util
 from script import fallpredict
 from script import sendmsg
@@ -76,6 +76,17 @@ def show():
     with col2:
         msg_send = st.empty()
         msg_send.info("메세지 전송여부를 보여줍니다.")
+        
+    #col1_bottom, col2_bottom = st.columns([3, 7])
+    #with col1_bottom :
+    #    st.info("낙상 분석")
+    #with col2_bottom :
+    #    st.info("""
+#2025년 5월 2일 오전 10시 42분경, 어르신의 자세 변화에서 낙상으로 의심되는 행동이 관측되었습니다.
+#감지된 시간 동안, 무릎 위치가 어깨보다 비정상적으로 높게 측정되었고, 무릎 관절이 카메라에서 사라진 것으로 보아 갑작스러운 자세 붕괴 또는 바닥으로의 낙하 가능성이 있습니다.
+#이는 일상적인 움직임과는 다른, 위험한 자세 변화 패턴으로, 즉각적인 확인이 필요합니다.
+#"""
+#)
     st.markdown("---")
 
     # 화면 하단 구성
@@ -100,6 +111,7 @@ def show():
         frame_placeholder = st.empty()
 
         landmark_data = []  # 누적 landmark 데이터 저장
+        landmark_data_df = [] # df에 넣을 데이터 저장장
 
         if start:
             # ✅ JSON 파일 최신 상태로 다시 로드
@@ -112,6 +124,8 @@ def show():
             analyzing = True
 
             while analyzing:
+                if "camera" not in st.session_state:
+                    st.session_state.camera = cv2.VideoCapture(0)
                 ret, frame = st.session_state.camera.read()
                 if not ret:
                     st.warning("카메라 프레임을 읽을 수 없습니다.")
@@ -190,12 +204,23 @@ def show():
                     fall_msg = "keras 모델로 검증합니다."
 
                 col2_box_msg = fall_check_function(convert_landmarks_to_row(frame_landmarks))
+
+                # convert_landmarks_to_row에 timestamp 넣어서 df로 변환하고 발생시점 전 10개의 데이터 저장하기
+                row = convert_landmarks_to_row(frame_landmarks)
+                row = {"timestamp": frame_landmarks["timestamp"]}
+                row.update(convert_landmarks_to_row(frame_landmarks))
+                row["checkfall"] = col2_box_msg
+                landmark_data_df.append(row)
+                df = pd.DataFrame(landmark_data_df)
+                util.save_fall_segments(df)
+
                 if col2_box_msg == 1 :
                     col2_box.error("💥🧓💢 **낙상!!**  \n⚠️ 감지된 자세가 위험합니다.", icon="🚨")
                     fallen_count += 1
                     if (fallen_count % fallen_send_msg_json["FALL_COUNT"] == 0) :
                         msg_send.info(f"낙상 {fallen_count}회가 초과하였으므로 보호자에게 메세지를 발송합니다.")
-                        sendmsg.send_message(f"{frame_landmarks['timestamp']} 낙상 발생!\n빠른 시간안에 확인 바랍니다.")
+                        if fallen_send_msg_json["SEND_YN"] == "Y" :
+                            sendmsg.send_message(f"{frame_landmarks['timestamp']} 낙상 발생!\n빠른 시간안에 확인 바랍니다.")
                     else :
                         msg_box.info(f"낙상 {fallen_count}회 발생하였습니다.")
                 else :

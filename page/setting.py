@@ -10,7 +10,8 @@ DATA_FILE = os.path.join(csv_dir, 'config.json')
 section_label_map = {
     "is_fallen": "🔧 사용자 낙상 기준",
     "is_fallen_model": "🔧 딥러닝 낙상 모델 기준",
-    "is_fallen_Upperbody": "🔧 상체 낙상 기준(테스트)"
+    "is_fallen_Upperbody": "🔧 상체 낙상 기준(테스트)",
+    "fallen_send_msg" : "🔧 텔레그램 전송 기준"
 }
 
 label_map = {
@@ -20,7 +21,8 @@ label_map = {
     "LK_Y": "왼쪽 무릎 Y값 기준",
     "RK_Y": "오른쪽 무릎 Y값 기준",
     "FALL_COUNT": "각 관절 낙상 판정 누적(Y값) 횟수",
-    "FALL_PROBABILITY": "낙상 확률 임계값"
+    "FALL_PROBABILITY": "낙상 확률 임계값",
+    "SEND_YN": "메세지 전송 여부"
 }
 
 # 🔄 데이터 불러오기
@@ -50,6 +52,14 @@ def editable_section(section, section_data):
             elif isinstance(value, float):
                 new_section[key] = st.number_input(
                     label, value=value, format="%.2f", key=widget_key, label_visibility="collapsed"
+                )
+            elif isinstance(value, str) and key == "SEND_YN":
+                new_section[key] = st.selectbox(
+                    label,
+                    options=["Y", "N"],
+                    index=0 if value == "Y" else 1,
+                    key=widget_key,
+                    label_visibility="collapsed"
                 )
             else:
                 st.warning(f"{label}: 지원되지 않는 데이터 유형입니다.")

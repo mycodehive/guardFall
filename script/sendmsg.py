@@ -3,8 +3,6 @@ import nest_asyncio
 import streamlit as st
 from script import util as ut
 from telegram import Bot
-import toml
-import os
 
 # ✅ 이벤트 루프 중첩 허용
 nest_asyncio.apply()
