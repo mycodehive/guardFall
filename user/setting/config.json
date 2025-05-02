@@ -18,6 +18,6 @@
   },
   "fallen_send_msg": {
     "FALL_COUNT": 30,
-    "SEND_YN": "N"
+    "SEND_YN": "Y"
   }
 }
