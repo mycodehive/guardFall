@@ -82,6 +82,7 @@ def show(model):
     │    ├── createmodel.py         # 모델 생성 (Model Training)
     │    ├── applymodel.py          # 모델 적용 (Model Apply)
     │    ├── motoring.py            # 실시간 감시 (Real-time Monitoring)
+    │    ├── analyzermonitor.py     # 실시간 감시 데이터 분석 (Data Analysis)
     │    ├── setting.py             # 각 낙상 판단 기준값 CRUD             
     │    └── link.py                # 각종 링크안내 페이지
     ├── user/

@@ -16,7 +16,7 @@ def safe_literal_eval(x):
 # checkfall == 1이 포함된 경우를 찾아서 csv에 저장
 def save_fall_segments(frame_landmarks: pd.DataFrame):
     # 경로 설정
-    output_dir = os.path.abspath(os.path.join("user", "monitor"))
+    output_dir = os.path.abspath(os.path.join("user", "monitor", "fall_segment_.csv"))
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -30,7 +30,9 @@ def save_fall_segments(frame_landmarks: pd.DataFrame):
         segment_df = frame_landmarks.iloc[start_idx:end_idx]
 
     # 파일명에 시간정보와 순번 포함 (중복 방지)
-    filename = f"fall_segment.csv"
-    filepath = os.path.join(output_dir, filename)
+    filepath = os.path.join(output_dir)
 
-    segment_df.to_csv(filepath, index=False)
+    try:
+        segment_df.to_csv(filepath, index=False)
+    except UnboundLocalError:
+        print("")

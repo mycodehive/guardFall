@@ -6,6 +6,7 @@ import page.createmodel as cm
 import page.applymodel as am
 import page.motoring as mo
 import page.setting as setg
+import page.analyzermonitor as azm
 import test.monitor_test as mot
 import page.link as link
 import os
@@ -35,8 +36,8 @@ with st.sidebar:
     selected = option_menu(
         menu_title="메뉴",
         #options=["홈", "영상 분석", "모델 생성", "모델 적용", "실시간 감시", "환경설정", "Github", "PPT", "Test"],
-        options=["홈", "영상 분석", "모델 생성", "모델 적용", "실시간 감시", "환경설정", "Github", "PPT"],
-        icons=["house", "camera-video", "cpu", "box-fill", "activity", "boxes", "github","file-earmark-ppt"],
+        options=["홈", "영상 분석", "모델 생성", "모델 적용", "실시간 감시", "데이터 분석", "환경설정", "Github", "PPT"],
+        icons=["house", "camera-video", "cpu", "box-fill", "activity", "body-text", "boxes", "github","file-earmark-ppt"],
         #icons=["house", "camera-video", "cpu", "box-fill", "activity", "boxes", "github","file-earmark-ppt", "activity"], # https://icons.getbootstrap.com/
         menu_icon="shield-lock",
         default_index=0,
@@ -57,6 +58,9 @@ elif selected == "모델 적용":
 
 elif selected == "실시간 감시":
     mo.show()
+
+elif selected == "데이터 분석":
+    azm.show()
 
 elif selected == "환경설정":
     setg.show()

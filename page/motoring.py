@@ -203,7 +203,11 @@ def show():
                     fall_check_function  = fallpredict.is_fallen_model   
                     fall_msg = "keras 모델로 검증합니다."
 
-                col2_box_msg = fall_check_function(convert_landmarks_to_row(frame_landmarks))
+                try:
+                    col2_box_msg = fall_check_function(convert_landmarks_to_row(frame_landmarks))
+                except UnboundLocalError:
+                    col2_box_msg = "데이터가 아직 수신되지 않았습니다."
+
 
                 # convert_landmarks_to_row에 timestamp 넣어서 df로 변환하고 발생시점 전 10개의 데이터 저장하기
                 row = convert_landmarks_to_row(frame_landmarks)
