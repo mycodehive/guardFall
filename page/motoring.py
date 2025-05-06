@@ -6,6 +6,7 @@ import os, json
 from script import util
 from script import fallpredict
 from script import sendmsg
+from script import db
 
 def convert_landmarks_to_row(frame_landmarks):
     return {
@@ -214,6 +215,8 @@ def show():
                 df = pd.DataFrame(landmark_data_df)
                 #util.save_fall_segments(df,selected)
                 util.save_fall_all_segments(df,selected)
+                db.create_tables()
+                db.insert_user(df)
 
                 if col2_box_msg == 1 :
                     col2_box.error("💥🧓💢 **낙상!!**  \n⚠️ 감지된 자세가 위험합니다.", icon="🚨")
