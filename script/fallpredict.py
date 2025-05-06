@@ -1,6 +1,7 @@
 import script.model_loader as ml
 import numpy as np
 import warnings, os, json
+import joblib
 
 # ✅ 경고 무시
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -46,30 +47,6 @@ def is_fallen(row) :
         return 1 if count >= is_fallen_json["FALL_COUNT"] else 0 #1이 낙상, 0은 정상
     return -1 # 판별불가
 
-# 메모리에 올린 모델을 통해 예측한다.
-def is_fallen_model(row) :
-    pose = extract_pose_data(row)
-    ls_x, ls_y, ls_v, ls_ok = pose["ls"]
-    rs_x, rs_y, rs_v, rs_ok = pose["rs"]
-    lk_x, lk_y, lk_v, lk_ok = pose["lk"]
-    rk_x, rk_y, rk_v, rk_ok = pose["rk"]
-    
-    is_fallen = 0
-    model, scaler, _model_loaded_time = ml.load_models_cached()
-    new_data = np.array([
-        [ls_x, ls_y, ls_v, ls_ok, rs_x, rs_y, rs_v, rs_ok, lk_x, lk_y, lk_v, lk_ok, rk_x, rk_y, rk_v, rk_ok]
-    ])
-    new_data_scaled = scaler.transform(new_data)
-    prediction = model.predict(new_data_scaled,verbose=0)
-    fall_probability = prediction[0][0]
-
-    if fall_probability >= is_fallen_model_json["FALL_PROBABILITY"]:
-        is_fallen = 1
-    else:
-        is_fallen = 0
-
-    return is_fallen
-
 # 낙상 여부 판단
 def is_fallen_Upperbody(row):
     pose = extract_pose_data(row)
@@ -86,3 +63,51 @@ def is_fallen_Upperbody(row):
             count += 1
         return 1 if count >= is_fallen_upper_json["FALL_COUNT"] else 0 #1이 낙상, 0은 정상, 판별불가
     return 0
+
+def is_fallenlearned(modelname, selectedmodel, row) :
+
+    # 1. 포즈 데이터 추출
+    pose = extract_pose_data(row)
+    ls_x, ls_y, ls_v, ls_ok = pose["ls"]
+    rs_x, rs_y, rs_v, rs_ok = pose["rs"]
+    lk_x, lk_y, lk_v, lk_ok = pose["lk"]
+    rk_x, rk_y, rk_v, rk_ok = pose["rk"]
+
+    # 2. 필요한 변수 선언
+    is_fallen = 0
+
+    # 3. 데이터 준비
+    new_data = np.array([
+        [ls_x, ls_y, ls_v, ls_ok, rs_x, rs_y, rs_v, rs_ok, lk_x, lk_y, lk_v, lk_ok, rk_x, rk_y, rk_v, rk_ok]
+    ])
+
+    scaler_path = os.path.join("user", "model", f"fall_model_{modelname}Model.pkl")
+    scaler = joblib.load(scaler_path)
+    new_data_scaled = scaler.transform(new_data)
+
+    # 4. 모델 입력 형태에 따라 예측
+    try:
+        if modelname == "dense":
+            prediction = selectedmodel.predict(new_data_scaled, verbose=0)
+        elif modelname == "lstm":
+            X_input = new_data_scaled.reshape((1, 1, 16))
+            prediction = selectedmodel.predict(X_input, verbose=0)
+        elif modelname == "ensemble":
+            input_dense = new_data_scaled
+            input_lstm = new_data_scaled.reshape((1, 1, 16))
+            prediction = selectedmodel.predict([input_dense, input_lstm], verbose=0)
+        else:
+            return 0  # 알 수 없는 모델명 → 낙상 아님으로 처리
+    except Exception as e:
+        print(f"[에러] 모델 예측 중 오류 발생: {e}")
+        return 0
+
+    # 5. 낙상 판단
+    fall_probability = float(prediction[0][0])
+
+    if fall_probability >= is_fallen_model_json["FALL_PROBABILITY"]:
+        is_fallen = 1
+    else:
+        is_fallen = 0
+
+    return is_fallen

@@ -30,6 +30,9 @@ def convert_landmarks_to_row(frame_landmarks):
         "right_knee_vr": frame_landmarks["right_knee"][3],
     }
 
+def convert_landmarks_list_to_series_list(landmarks_list):
+    return [convert_landmarks_to_row(lm) for lm in landmarks_list]
+
 # 경로 설정
 config_path = os.path.abspath(os.path.join("user", "setting", "config.json"))
 
@@ -39,7 +42,7 @@ def show():
 
     selected = st.radio(
         "",
-        ("상체모델(Test)", "사용자모델", "딥러닝모델"),
+        ("상체모델(Test)","denseModel", "lstmModel", "ensembleModel"),
         horizontal=True
     )
 
@@ -192,22 +195,15 @@ def show():
                     col1_box_msg ="🎥 카메라 ON"
                 col1_box.success(col1_box_msg)
 
-                # "상체모델(Test)", "사용자모델", "딥러닝모델"
+                # 모델 적용
+                models = st.session_state.models
                 if selected == "상체모델(Test)":
-                    fall_check_function  = fallpredict.is_fallen_Upperbody
+                    col2_box_msg = fallpredict.is_fallen_Upperbody(convert_landmarks_to_row(frame_landmarks))
                     fall_msg = "테스트를 위해 양쪽 어깨 좌표만 사용합니다."
-                elif selected == "사용자모델":
-                    fall_check_function  = fallpredict.is_fallen
-                    fall_msg = "동영상 학습을 위한 기준 함수입니다."
-                elif selected == "딥러닝모델":
-                    fall_check_function  = fallpredict.is_fallen_model   
-                    fall_msg = "keras 모델로 검증합니다."
-
-                try:
-                    col2_box_msg = fall_check_function(convert_landmarks_to_row(frame_landmarks))
-                except UnboundLocalError:
-                    col2_box_msg = "데이터가 아직 수신되지 않았습니다."
-
+                else :
+                    selected_modelname = selected.replace("Model", "")
+                    col2_box_msg = fallpredict.is_fallenlearned(selected_modelname, models[selected_modelname], convert_landmarks_to_row(frame_landmarks))
+                    fall_msg = f"{selected_modelname} 모델을 통한 낙상판단입니다."
 
                 # convert_landmarks_to_row에 timestamp 넣어서 df로 변환하고 발생시점 전 10개의 데이터 저장하기
                 row = convert_landmarks_to_row(frame_landmarks)
@@ -216,7 +212,8 @@ def show():
                 row["checkfall"] = col2_box_msg
                 landmark_data_df.append(row)
                 df = pd.DataFrame(landmark_data_df)
-                util.save_fall_segments(df)
+                #util.save_fall_segments(df,selected)
+                util.save_fall_all_segments(df,selected)
 
                 if col2_box_msg == 1 :
                     col2_box.error("💥🧓💢 **낙상!!**  \n⚠️ 감지된 자세가 위험합니다.", icon="🚨")
@@ -229,7 +226,7 @@ def show():
                         msg_box.info(f"낙상 {fallen_count}회 발생하였습니다.")
                 else :
                     col2_box.success("정상")
-                col3_box.success(f"낙상모델 : {selected}\n{fall_msg}")
+                col3_box.success(f"낙상모델 : {fall_msg}")
 
                 # 분석 중지 버튼이 눌리면
                 if stop:

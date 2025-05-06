@@ -4,13 +4,13 @@ import mediapipe as mp
 from collections import defaultdict
 import os, time
 import pandas as pd
-import ast
 from script import util
 from script import fallpredict
 
 def show():
     st.title("🎥 영상 분석")
-    st.write("영상의 좌표를 추출하고 추출한 좌표값으로 낙상여부를 체크합니다. 해당 데이터는 머신러닝 학습 데이터로 활용됩니다.")
+    #st.write("영상의 좌표를 추출하고 추출한 좌표값으로 낙상여부를 체크합니다. 해당 데이터는 머신러닝 학습 데이터로 활용됩니다.")
+    st.write("영상의 좌표를 추출하고 Traning Data를 생성합니다.")
 
     mp_pose = mp.solutions.pose
     mp_drawing = mp.solutions.drawing_utils
@@ -26,17 +26,23 @@ def show():
     with col1:
         st.markdown("### 💾 파일을 업로드하세요.")
 
-        selected = st.radio(
-            "낙상판단 기준을 무엇으로 할까요?",
-            ("사용자모델", "딥러닝모델"),
-            horizontal=True
-        )
+        #selected = st.radio(
+        #    "낙상판단 기준을 무엇으로 할까요?",
+        #    ("사용자모델", "Dense모델", "LSTM모델", "EN모델"),
+        #    horizontal=True
+        #)
 
-        choose_model = 0
-        if selected == "사용자모델":
-            choose_model = "userModel"
-        elif selected == "딥러닝모델":
-            choose_model = "kerasModel"
+        #choose_model = 0
+        #if selected == "사용자모델":
+        #    choose_model = "userModel"
+        #elif selected == "Dense모델":
+        #    choose_model = "denseModel"
+        #elif selected == "LSTM모델":
+        #    choose_model = "lstmModel"
+        #elif selected == "EN모델":
+        #    choose_model = "ensembleModel"
+
+        choose_model = "userModel"
 
         video_file = st.file_uploader("🎞️ 분석할 영상 파일을 업로드하세요", type=["mp4", "avi"])
         progress_box = st.empty()
@@ -101,15 +107,6 @@ def show():
                     }
                     landmark_data.append(frame_landmarks)
 
-                    # 좌표 실시간 표시
-                    #landmarks_box.markdown(f"""
-                    #⏱ **시간**: {frame_landmarks['timestamp']}  
-                    #🦴 **왼쪽 어깨**: {frame_landmarks['left_shoulder']}  
-                    #🦴 **오른쪽 어깨**: {frame_landmarks['right_shoulder']}  
-                    #🦵 **왼쪽 무릎**: {frame_landmarks['left_knee']}  
-                    #🦵 **오른쪽 무릎**: {frame_landmarks['right_knee']}  
-                    #""")
-
                     # 좌표 문자열 생성
                     log_text = f"""
                     ⏱ {frame_landmarks['timestamp']}  
@@ -130,9 +127,11 @@ def show():
             cap.release()
 
             if choose_model == "userModel" :
-                progress_box.info(f"사용자모델로 낙상여부 판단중...")
-            elif choose_model == "kerasModel" :
-                 progress_box.info(f"딥러닝모델로 낙상여부 판단중...")
+                #progress_box.info(f"사용자모델로 낙상여부 판단중...")
+                progress_box.info(f"좌표 추출하여 저장중...")
+            else :
+                 #modelname = choose_model.replace("Model", "")
+                 progress_box.info(f"{choose_model}로 낙상여부 판단중...")
 
             # 👉 landmark 데이터 저장
             if landmark_data:
@@ -145,10 +144,10 @@ def show():
 
                 # 기존 컬럼 제거
                 df.drop(columns=["left_shoulder", "right_shoulder", "left_knee", "right_knee"], inplace=True)
+                #print("======================== analyzermov choose_model : " + choose_model)
+
                 if choose_model == "userModel" :
                     df["checkFall"] = df.apply(lambda row: fallpredict.is_fallen(row.to_dict()), axis=1)
-                elif choose_model == "kerasModel" :
-                    df["checkFall"] = df.apply(lambda row: fallpredict.is_fallen_model(row.to_dict() ), axis=1)
 
                 csv_dir = os.path.abspath(os.path.join("user", "csv"))
                 file_name = os.path.splitext(os.path.basename(file_path))[0]+"_"+choose_model+"_landmarks.csv"

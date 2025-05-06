@@ -1,32 +1,36 @@
 import streamlit as st
-import os, io
-import joblib
+import os
 from tensorflow.keras.models import load_model
-from datetime import datetime
 
-# 모델과 스케일러를 저장할 변수
-_model = None
-_scaler = None
-_model_loaded_time = None
-
-def _load_models_real():
-    """캐시 없이 진짜 모델 로딩"""
-    global _model, _scaler, _model_loaded_time
-    model_dir = os.path.abspath(os.path.join("user", "model"))
-    fall_model = os.path.join(model_dir, "fall_model.keras")
-    scaler_model = os.path.join(model_dir, "scaler.pkl")
-
-    _model = load_model(fall_model)
-    _scaler = joblib.load(scaler_model)
-    _model_loaded_time = datetime.now()
-
+# [20250506]
 @st.cache_resource
-def load_models_cached():
-    """Streamlit 캐시를 이용하는 버전"""
-    _load_models_real()
-    return _model, _scaler, _model_loaded_time
+def load_models(model_name):
+    model_dir = os.path.abspath(os.path.join("user", "model"))
 
-def reload_models():
-    """강제 리로드 (캐시 무시)"""
-    _load_models_real()
-    return _model, _scaler, _model_loaded_time
+    if model_name == "ALL":
+        keras_files = [
+            f for f in os.listdir(model_dir)
+            if f.endswith(".keras") and f != "fall_model.keras"
+        ]
+
+        if not keras_files:
+            st.warning("⚠️ .keras 파일이 존재하지 않습니다.")
+            return {}
+
+        models = {}
+        for fname in keras_files:
+            # fall_model_denseModel.keras → dense
+            key = fname.replace("fall_model_", "").replace("Model.keras", "")
+            path = os.path.join(model_dir, fname)
+            models[key] = load_model(path)
+
+        return models
+    else:
+        file_name = f"fall_model_{model_name}Model.keras"
+        path = os.path.join(model_dir, file_name)
+
+        if not os.path.exists(path):
+            st.warning(f"⚠️ {file_name} 파일이 존재하지 않습니다.")
+            return None
+
+        return {model_name: load_model(path)}

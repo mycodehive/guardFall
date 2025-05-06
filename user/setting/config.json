@@ -17,7 +17,7 @@
     "FALL_COUNT": 2
   },
   "fallen_send_msg": {
-    "FALL_COUNT": 30,
+    "FALL_COUNT": 50,
     "SEND_YN": "Y"
   }
 }

@@ -1,8 +1,9 @@
 import streamlit as st
 
-def show(model):
+def show():
     st.title("🛡️ 배려대상자(노인, 아이 등) 낙상 감지 및 알림 시스템 소개")
-    if model :
+    models = st.session_state.models
+    if models :
         st.info("이 메세지가 보이면 기존 학습된 모델이 로딩 완료되었다는 뜻입니다.")
     st.write("""
     ### 📋 프로젝트 개요
