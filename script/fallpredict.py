@@ -1,7 +1,7 @@
 import script.model_loader as ml
 import numpy as np
 import warnings, os, json
-import joblib
+import joblib, math
 
 # ✅ 경고 무시
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -46,6 +46,80 @@ def is_fallen(row) :
             count += 1
         return 1 if count >= is_fallen_json["FALL_COUNT"] else 0 #1이 낙상, 0은 정상
     return -1 # 판별불가
+
+def is_fallen_angle(row) :
+    pose = extract_pose_data(row)
+    ls_x, ls_y, ls_v, ls_ok = pose["ls"]
+    rs_x, rs_y, rs_v, rs_ok = pose["rs"]
+    lk_x, lk_y, lk_v, lk_ok = pose["lk"]
+    rk_x, rk_y, rk_v, rk_ok = pose["rk"]
+
+    # 유클리드 거리 계산 함수 (두 점 사이의 거리)
+    def calculate_distance(x1, y1, x2, y2):
+        return ((x2 - x1)**2 + (y2 - y1)**2)**0.5
+    
+    # 2. 각도 계산 함수 (벡터 간의 각도 계산)
+    def calculate_angle(x1, y1, x2, y2, x3, y3):
+        v1_x = x2 - x1
+        v1_y = y2 - y1
+        v2_x = x3 - x1
+        v2_y = y3 - y1
+        
+        dot_product = v1_x * v2_x + v1_y * v2_y
+        magnitude_v1 = math.sqrt(v1_x**2 + v1_y**2)
+        magnitude_v2 = math.sqrt(v2_x**2 + v2_y**2)
+
+        # 두 벡터 중 하나가 길이 0이면 계산 불가: 기본값으로 0 리턴턴
+        if magnitude_v1 == 0 or magnitude_v2 == 0:
+            return 0.0
+
+        # 안전한 코사인 값(부동소수점 오차 방지)
+        # cos_angle = dot_product / (magnitude_v1 * magnitude_v2)
+        cos_angle = dot_product / (magnitude_v1 * magnitude_v2)
+        cos_angle = max(-1.0, min(1.0, cos_angle))
+
+        angle = math.acos(cos_angle)
+        return math.degrees(angle)  # 라디안을 도로 변환
+    
+    # 어깨 간 거리 계산
+    shoulder_distance = calculate_distance(ls_x, ls_y, rs_x, rs_y)
+
+    # 무릎 간 거리 계산
+    knee_distance = calculate_distance(lk_x, lk_y, rk_x, rk_y)
+
+    # 어깨와 무릎의 각도 계산
+    shoulder_angle = calculate_angle(ls_x, ls_y, rs_x, rs_y, (lk_x + rk_x) / 2, (lk_y + rk_y) / 2)
+
+    # 어깨 비대칭성 (수평 차이 계산)
+    delta_x = abs(ls_x - rs_x)
+    delta_y = abs(ls_y - rs_y)
+
+    # 무릎 비대칭성 (수평 차이 계산)
+    knee_delta_x = abs(lk_x - rk_x)
+    knee_delta_y = abs(lk_y - rk_y)
+
+    # 임계값 설정
+    threshold_distance = 0.2  # 어깨 및 무릎 간 거리 차이
+    threshold_angle = 150  # 각도 임계값 (낙상 시 150도를 넘으면 위험)
+    threshold_asymmetry = 0.1  # 비대칭성 임계값
+
+    # 어깨 또는 무릎 간 거리 기준
+    if shoulder_distance > threshold_distance or knee_distance > threshold_distance:
+        return 11  # "낙상 위험 감지"
+
+    # 어깨 각도 기준
+    if shoulder_angle > threshold_angle:
+        return 12  # "신체 균형 이상, 낙상 징후"
+
+    # 어깨 비대칭성 감지
+    if delta_x > threshold_asymmetry or delta_y > threshold_asymmetry:
+        return 13  # "어깨 비대칭성 감지, 낙상 위험"
+
+    # 무릎 비대칭성 감지
+    if knee_delta_x > threshold_asymmetry or knee_delta_y > threshold_asymmetry:
+        return 14  # "무릎 비대칭성 감지, 낙상 위험"
+
+    return 0  # 정상 범주
 
 # 낙상 여부 판단
 def is_fallen_Upperbody(row):
