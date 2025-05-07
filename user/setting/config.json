@@ -19,5 +19,8 @@
   "fallen_send_msg": {
     "FALL_COUNT": 50,
     "SEND_YN": "Y"
+  },
+  "user_agentmodel": {
+    "FALLMODEL": "USER"
   }
 }

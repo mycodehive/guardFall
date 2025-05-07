@@ -5,7 +5,7 @@ def show():
     models = st.session_state.models
     if models :
         st.info("이 메세지가 보이면 기존 학습된 모델이 로딩 완료되었다는 뜻입니다.")
-    st.write("""
+    st.markdown("""
     ### 📋 프로젝트 개요
     - 배려대상자의 **낙상 사고**는 골절, 후유증, 심각할 경우 사망으로 이어질 수 있어 **빠른 감지와 대응**이 중요합니다.
     - 본 시스템은 **웹캠**을 이용해, 보호가 필요한 분들의 **움직임**을 실시간으로 감지하고,**낙상 여부를 판단**하고, 필요 시 **텔레그램 알림**을 보내는 것을 목표로 합니다.
@@ -22,13 +22,13 @@ def show():
     ```plaintext
     카메라 (웹캠/휴대폰) → 관절 추출 (MediaPipe) → 상태 분석 (딥러닝 모델) → 낙상 판단 → 알림 (Telegram) 발송
     ```
-    ![image](https://github.com/user-attachments/assets/546b47df-e08d-4a8f-9768-a3a6ec9fbc1d)   
+    <img src="https://github.com/user-attachments/assets/ce181fd3-d190-4773-b1cb-594ee67eae93" width="100%">  
 
     ---
 
     # 📖 메뉴 구성 및 설명
 
-    ## 1. 홈 (Home)
+    ## 1. 설명 (Home)
 
     ### 📝 설명
     - 시스템의 **개요**와 **프로젝트 목표**를 안내합니다.
@@ -61,12 +61,19 @@ def show():
     ```
     ---
 
-    ## 4. 실시간 감시 (Real-time Monitoring)
+    ## 4. 실시간 감지 (Real-time Monitoring) - 사용자 메뉴
 
     ### 📝 설명
     - 실제 서비스용 모드.
     - 웹캠으로 실시간 모니터링하여 낙상 위험이 감지되면,텔레그램 알림을 전송합니다.
     ---
+                
+    ## 5. 데이터 분석 (Data Analyzer) - 사용자 메뉴
+
+    ### 📝 설명
+    - 실제 서비스용 모드.
+    - 낙상 발생 시점 앞 10개 데이터부터 징후 발견을 위한 GPT 분석 결과값을 보여줍니다.
+    ---                
 
     # 📦 개발 파일 구조
 
@@ -99,4 +106,5 @@ def show():
     ├── telegram_config.py          # 텔레그램 봇 설정
     └── requirements.txt            # 설치 패키지 목록(uv add -r requirements.txt (pip install tensorflow==2.17.0 만 따로 인스톨))
     ```
-    """)
+    """,
+    unsafe_allow_html=True)

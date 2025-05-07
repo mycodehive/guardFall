@@ -8,7 +8,7 @@ import joblib
 import matplotlib.pyplot as plt
 
 def show():
-    st.title("🧠 모니터링 데이터 분석(현재 개발중 - 20250502)")
+    st.title("🧠 모니터링 데이터 분석")
     st.write("실시간 모니터링 한 데이터를 기반으로 GPT API로 분석합니다.")
 
     # 📁 1. 파일이 저장된 폴더 경로
@@ -39,7 +39,7 @@ def show():
             st.warning("⚠️ 'fall_segment.csv' 파일이 존재하지 않습니다.")
         
         #df.to_string(index=False)
-        if selected_file == "fall_segment_sample.csv":
+        if selected_file == "fall_segment_상체모델(Test).csv":
             st.title("🧠 GPT 데이터 분석 결과(샘플)")
             st.markdown("""
     제공해주신 관절 좌표 데이터를 분석한 결과, **낙상(checkFall=1)이 감지된 시간 구간**은 아래와 같습니다:

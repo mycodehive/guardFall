@@ -40,30 +40,11 @@ def show():
     st.title("🛡️ 우리 곁에")
     st.write("낙상 여부를 실시간으로 감지합니다.")
 
-    #selected = st.radio(
-    #    "",
-    #    ("상체모델(Test)","denseModel", "lstmModel", "ensembleModel"),
-    #    horizontal=True
-    #)
-
-    # 경로 설정
-    config_path = os.path.abspath(os.path.join("user", "setting", "config.json"))
-
-    # JSON 파일 읽기
-    with open(config_path, "r", encoding="utf-8") as f:
-        config = json.load(f)
-
-    # 섹션별 변수 할당
-    user_agentmodel_json = config.get("user_agentmodel", {})
-
-    fallmodel_display_map = {
-        "USER": "상체모델(Test)",
-        "DENSE": "denseModel",
-        "LSTM": "lstmModel",
-        "ENSEMBLE": "ensembleModel"
-    }
-
-    selected = fallmodel_display_map.get(user_agentmodel_json["FALLMODEL"], "상체모델(Test)")
+    selected = st.radio(
+        "",
+        ("상체모델(Test)","denseModel", "lstmModel", "ensembleModel"),
+        horizontal=True
+    )
 
     mp_pose = mp.solutions.pose
     mp_drawing = mp.solutions.drawing_utils
@@ -89,7 +70,7 @@ def show():
 
     with col3_top:
         col3_box = st.empty()
-        col3_box.info(f"낙상모델 : {selected}")
+        col3_box.info("낙상모델")
 
     col1, col2 = st.columns([4, 6])
     with col1:

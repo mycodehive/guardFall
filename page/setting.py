@@ -11,7 +11,8 @@ section_label_map = {
     "is_fallen": "🔧 사용자 낙상 기준",
     "is_fallen_model": "🔧 딥러닝 낙상 모델 기준",
     "is_fallen_Upperbody": "🔧 상체 낙상 기준(테스트)",
-    "fallen_send_msg" : "🔧 텔레그램 전송 기준"
+    "fallen_send_msg" : "🔧 텔레그램 전송 기준",
+    "user_agentmodel" : "🔧 사용자 낙상모델 적용 기준",
 }
 
 label_map = {
@@ -22,7 +23,8 @@ label_map = {
     "RK_Y": "오른쪽 무릎 Y값 기준",
     "FALL_COUNT": "각 관절 낙상 판정 누적(Y값) 횟수",
     "FALL_PROBABILITY": "낙상 확률 임계값",
-    "SEND_YN": "메세지 전송 여부"
+    "SEND_YN": "메세지 전송 여부",
+    "FALLMODEL": "낙상판단 모델"
 }
 
 # 🔄 데이터 불러오기
@@ -58,6 +60,21 @@ def editable_section(section, section_data):
                     label,
                     options=["Y", "N"],
                     index=0 if value == "Y" else 1,
+                    key=widget_key,
+                    label_visibility="collapsed"
+                )
+            elif isinstance(value, str) and key == "FALLMODEL":
+                options = ["USER", "DENSE", "LSTM", "ENSEMBLE"]
+                upper_value = value.upper()  # 소문자를 대문자로 변환하여 매칭
+                try:
+                    index = options.index(upper_value)
+                except ValueError:
+                    index = 0  # 기본값
+
+                new_section[key] = st.selectbox(
+                    label,
+                    options=options,
+                    index=index,
                     key=widget_key,
                     label_visibility="collapsed"
                 )
