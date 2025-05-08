@@ -45,11 +45,13 @@ if "models" not in st.session_state:
 
 # ✅ 로그인 페이지
 if not st.session_state.logged_in:
-    st.markdown(f"""
-        <div style='text-align: center; padding: 30px 0;'>
-            <img src="data:image/jpeg;base64,{image_base64}" width="670">
-        </div>
-    """, unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown(f"""
+            <div style='text-align: center; padding: 30px 0;'>
+                <img src="data:image/jpeg;base64,{image_base64}" width="100%">
+            </div>
+        """, unsafe_allow_html=True)
 
     st.markdown("""
         <style>
