@@ -148,7 +148,7 @@ def show():
 
                 if choose_model == "userModel" :
                     #df["checkFall"] = df.apply(lambda row: fallpredict.is_fallen(row.to_dict()), axis=1)
-                    df["checkFall"] = df.apply(lambda row: fallpredict.is_fallen_angle(row.to_dict()), axis=1)
+                    df["checkFall"] = df.apply(lambda row: fallpredict.is_fallen(row.to_dict()), axis=1)
 
                 csv_dir = os.path.abspath(os.path.join("user", "csv"))
                 file_name = os.path.splitext(os.path.basename(file_path))[0]+"_"+choose_model+"_landmarks.csv"

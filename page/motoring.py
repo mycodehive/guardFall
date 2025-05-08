@@ -222,7 +222,7 @@ def show():
                     fall_msg = "테스트를 위해 양쪽 어깨 좌표만 사용합니다."
                 else :
                     selected_modelname = selected.replace("Model", "")
-                    col2_box_msg = fallpredict.is_fallenlearned(selected_modelname, models[selected_modelname], convert_landmarks_to_row(frame_landmarks))
+                    col2_box_msg = fallpredict.is_fallen(selected_modelname, models[selected_modelname], convert_landmarks_to_row(frame_landmarks))
                     fall_msg = f"{selected_modelname} 모델을 통한 낙상판단입니다."
 
                 # convert_landmarks_to_row에 timestamp 넣어서 df로 변환하고 발생시점 전 10개의 데이터 저장하기

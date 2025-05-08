@@ -21,6 +21,6 @@
     "SEND_YN": "Y"
   },
   "user_agentmodel": {
-    "FALLMODEL": "USER"
+    "FALLMODEL": "DENSE"
   }
 }
