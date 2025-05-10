@@ -9,6 +9,9 @@ from script import sendmsg
 from script import db
 
 def convert_landmarks_to_row(frame_landmarks):
+    if frame_landmarks is None:
+        return None  # 또는 예외처리, 혹은 빈 dict 반환
+    
     return {
         "left_shoulder_x": frame_landmarks["left_shoulder"][0],
         "left_shoulder_y": frame_landmarks["left_shoulder"][1],
@@ -100,8 +103,8 @@ def show():
         msg_send = st.empty()
         msg_send.info("메세지 전송여부를 보여줍니다.")
     
-    warning_box = st.empty()
-    warning_box.warning("시연 테스트를 위해서 상체만으로 낙상테스트를 보여드리겠습니다.")
+    #warning_box = st.empty()
+    #warning_box.warning("시연 테스트를 위해서 상체만으로 낙상테스트를 보여드리겠습니다.")
 
     st.markdown("---")
 
@@ -218,20 +221,25 @@ def show():
                     fall_msg = "테스트를 위해 양쪽 어깨 좌표만 사용합니다."
                 else :
                     selected_modelname = selected.replace("Model", "")
-                    col2_box_msg = fallpredict.is_fallen(selected_modelname, models[selected_modelname], convert_landmarks_to_row(frame_landmarks))
+                    landmark_row = convert_landmarks_to_row(frame_landmarks)
+                    if landmark_row is not None:
+                        col2_box_msg = fallpredict.is_fallenlearned(selected_modelname, models[selected_modelname], landmark_row)
+                    else:
+                        col2_box_msg = "❌ 관절 정보 없음 (포즈 인식 실패)"
                     fall_msg = f"{selected_modelname} 모델을 통한 낙상판단입니다."
 
                 # convert_landmarks_to_row에 timestamp 넣어서 df로 변환하고 발생시점 전 10개의 데이터 저장하기
-                row = convert_landmarks_to_row(frame_landmarks)
-                row = {"timestamp": frame_landmarks["timestamp"]}
-                row.update(convert_landmarks_to_row(frame_landmarks))
-                row["checkfall"] = col2_box_msg
-                landmark_data_df.append(row)
-                df = pd.DataFrame(landmark_data_df)
-                #util.save_fall_segments(df,selected)
-                util.save_fall_all_segments(df,selected)
-                db.create_tables()
-                db.insert_user(df)
+                if frame_landmarks is not None:
+                    row = convert_landmarks_to_row(frame_landmarks)
+                    row = {"timestamp": frame_landmarks["timestamp"]}
+                    row.update(convert_landmarks_to_row(frame_landmarks))
+                    row["checkfall"] = col2_box_msg
+                    landmark_data_df.append(row)
+                    df = pd.DataFrame(landmark_data_df)
+                    #util.save_fall_segments(df,selected)
+                    util.save_fall_all_segments(df,selected)
+                    db.create_tables()
+                    db.insert_user(df)
 
                 if col2_box_msg == 1 :
                     col2_box.error("💥🧓💢 **낙상!!**  \n⚠️ 감지된 자세가 위험합니다.", icon="🚨")
