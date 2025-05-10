@@ -9,6 +9,7 @@ dependencies = [
     "mediapipe==0.10.21",
     "nest-asyncio==1.5.8",
     "numpy==1.26.4",
+    "openai==1.14.3",
     "opencv-python==4.11.0.86",
     "pandas==2.2.2",
     "python-telegram-bot==22.0",

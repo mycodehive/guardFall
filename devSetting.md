@@ -32,6 +32,11 @@
         C:\guardFall\pyproject.toml</pre>
 
 ### Step 5
+  - Python 환경에 pip가 설치되어 있지 않거나, 오래된 pip를 최신 버전으로 업그레이드하고자 할 때 사용
+       <pre>
+       .venv\Scripts\python.exe -m ensurepip --upgrade</pre>
+
+### Step 6
   - uv add -r requirements.txt 로 설치
   - 단, TensorFlows는 가상환경 내에서 uv로 설치리 의존성 파일까지 설치되면서 윈도우에서 맥용 라이브러가 설치됨. 오류발생
     - window :
@@ -41,7 +46,7 @@
     - mac : requirements.txt 에 tensorflow=2.17.0 을 추가하여 uv add -r requirements.txt 처리
   - C:\guardFall\pyproject.toml 의 dependencies 항목 확인하기
 
-### Step 6
+### Step 7
   - 실행하기
     - streamlit 실행 : uv run -- streamlit run streamlit_app.py
     - 일반 py 실행 : uv run main.py

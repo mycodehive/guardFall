@@ -99,17 +99,10 @@ def show():
     with col2:
         msg_send = st.empty()
         msg_send.info("메세지 전송여부를 보여줍니다.")
-        
-    #col1_bottom, col2_bottom = st.columns([3, 7])
-    #with col1_bottom :
-    #    st.info("낙상 분석")
-    #with col2_bottom :
-    #    st.info("""
-#2025년 5월 2일 오전 10시 42분경, 어르신의 자세 변화에서 낙상으로 의심되는 행동이 관측되었습니다.
-#감지된 시간 동안, 무릎 위치가 어깨보다 비정상적으로 높게 측정되었고, 무릎 관절이 카메라에서 사라진 것으로 보아 갑작스러운 자세 붕괴 또는 바닥으로의 낙하 가능성이 있습니다.
-#이는 일상적인 움직임과는 다른, 위험한 자세 변화 패턴으로, 즉각적인 확인이 필요합니다.
-#"""
-#)
+    
+    warning_box = st.empty()
+    warning_box.warning("시연 테스트를 위해서 상체만으로 낙상테스트를 보여드리겠습니다.")
+
     st.markdown("---")
 
     # 화면 하단 구성
@@ -162,6 +155,7 @@ def show():
 
                 # 랜드마크가 있으면 처리
                 current_time = time.time()
+                frame_landmarks = None
                 if results.pose_landmarks:                    
                     mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
@@ -205,6 +199,8 @@ def show():
                         """
                         landmark_logs.append(log_text)
                         landmarks_box.markdown("### 📝 누적 좌표 로그(x,y,신뢰도,적합여부)\n\n" + '\n---\n'.join(landmark_logs[-1:]), unsafe_allow_html=True)
+                else:
+                    col2_box_msg = "⚠️ 관절 정보 없음"
 
                 # 화면에 출력
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)

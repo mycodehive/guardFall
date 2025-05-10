@@ -48,7 +48,7 @@ def show(auto_run):
             y_pred = model.predict(X_input)
             y_pred_label = (y_pred > 0.5).astype(int).flatten()
             accuracy = accuracy_score(y_true, y_pred_label)
-            recall = recall_score(y_true, y_pred_label)
+            recall = recall_score(y_true, y_pred_label, average='macro')
             consistency = np.std(y_pred)
 
             results.append({
@@ -87,7 +87,7 @@ def show(auto_run):
         ## 📊 모델 종합 분석
 
         - **정확도 차지**: {' / '.join(acc_best_models)} 모델이 {best_acc:.2f}%로 가장 우수합니다.
-        - **추론 일관성(표준편편차)**: {' / '.join(std_best_models)} 모델이 {min_std:.4f}로 가장 안정적입니다.
+        - **추론 일관성(표준편차)**: {' / '.join(std_best_models)} 모델이 {min_std:.4f}로 가장 안정적입니다.
         - **재현율(Recall)**: {' / '.join(recall_best_models)} 모델이 {best_recall:.2f}%로 낙상을 가장 잘 감지합니다.
 
         🧠 결론적으로, 

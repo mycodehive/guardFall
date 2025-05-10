@@ -78,6 +78,7 @@ def show(auto_run):
         )
 
         time.sleep(displaytime)
+        # DNN
         progress_box.success("✔️ [4] 모델을 정의합니다.")
         model = Sequential([
             Dense(64, activation='relu', input_shape=(X_train.shape[1],)),

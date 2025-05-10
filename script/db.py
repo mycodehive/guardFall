@@ -5,7 +5,8 @@ import sqlite3
 import streamlit as st
 import pandas as pd
 
-db_path = st.secrets['database']['path']
+
+db_path = os.path.abspath(os.path.join("db", "guardfall.db"))
 
 # 1. data 폴더가 없으면 생성
 if not os.path.exists("db"):
